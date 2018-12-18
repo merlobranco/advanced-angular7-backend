@@ -62,7 +62,34 @@ function create(req, res) {
 	}
 }
 
+function login(req, res) {
+	var params = req.body;
+
+	var email = params.email;
+	var password = params.password;
+
+	User.findOne({email: email.toLowerCase()}, (err, user) => { 
+			if (err) {
+				res.status(500).send({message: 'Thrown error while checking if the user exists'});
+			} else {
+				if (user) {
+					bcrypt.compare(password, user.password, (err, check) => {
+						if (check) {
+							res.status(200).send({user});
+						} else {
+							res.status(404).send({message: 'The provided user could not be logged'});
+						}
+					});
+					
+				} else {
+					res.status(404).send({message: 'The provided user does not exist'});
+				}
+			}
+		});
+}
+
 module.exports = {
 	tests,
-	create
+	create,
+	login
 };
