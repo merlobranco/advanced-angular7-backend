@@ -13,7 +13,8 @@ var jwt = require('../services/jwt');
 // Actions
 function tests(req, res) {
 	res.status(200).send({
-		message: 'Testing the user controller and tests action'
+		message: 'Testing the user controller and tests action',
+		user: req.user
 	});
 }
 
