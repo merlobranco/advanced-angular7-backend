@@ -6,6 +6,7 @@ var bodyParser = require('body-parser');
 var app = express();
 
 // Loading routes
+var user_routes = require('./routes/user');
 
 // body-parser middlewares 
 app.use(bodyParser.urlencoded({extended:false}));
@@ -15,11 +16,8 @@ app.use(bodyParser.json());
 // Headers and Cors configuration
 
 
-// body-parser routes
-app.get('/test', (req, res) => {
-	res.status(200).send({message : 'This is the test method'});
-});
-
+// Base routes
+app.use('/api', user_routes);
 
 // Exposting the created module 
 // for being used in another application
