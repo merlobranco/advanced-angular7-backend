@@ -2,6 +2,7 @@
 
 // Node modules
 var bcrypt = require('bcrypt-nodejs');
+var fs = require('fs');
 
 // Models
 var User = require('../models/user');
@@ -122,9 +123,53 @@ function update(req, res) {
 	});	
 }
 
+function uploadImage(req, res) {
+	var userId = req.params.id;
+	var file_name = 'no uploaded';
+
+	if(req.files) {
+		var file_path = req.files.image.path;
+		var file_split = file_path.split('\\');
+		file_name = file_split[2];
+
+		var ext_split = file_name.split('\.');
+		var file_ext = ext_split[1];
+
+		if (file_ext == 'png' || file_ext == 'jpg' || file_ext == 'jpeg' || file_ext == 'gif') {
+			if (userId != req.user.sub) {
+				return res.status(500).send({message: 'You do not have permission for updating the provided user'});
+			}
+
+			User.findByIdAndUpdate(userId, {image: file_name}, {new: true}, (err, userUpdated) => {
+				if (err) {
+					res.status(500).send({message: 'Thrown error while updating user'});
+				} else {
+					if (!userUpdated) {
+						res.status(404).send({message: 'The user could not be updated'});
+					} else {
+						res.status(200).send({ user: userUpdated, image: file_name });
+					}
+				}
+			});
+		} else {
+			// Deleting no valid files
+			fs.unlink(file_path, (err) => {
+				if (err) {
+					res.status(200).send({message: 'No valid file extension. File not deleted'});
+				} else {
+					res.status(200).send({message: 'No valid file extension. Should be png, jpg, jpeg or gif'});
+				}
+			});
+		}
+	} else {
+		res.status(200).send({message: 'No files has been uploaded'});
+	}
+}
+
 module.exports = {
 	tests,
 	create,
 	login,
-	update
+	update,
+	uploadImage
 };

@@ -10,6 +10,7 @@ var UserSchema = Schema({
 	surname: String,
 	email: String,
 	password: String,
+	image: String,
 	role: String
 });
 
