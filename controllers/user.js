@@ -180,11 +180,26 @@ function getImageFile(req, res) {
 	})
 }
 
+function getKeepers(req, res) {
+	User.find({role:'ROLE_ADMIN'}).exec((err, users) => {
+		if (err) {
+			res.status(500).send({message: 'Thrown error while requesting the keepers'});
+		} else {
+			if (!users) {
+				res.status(404).send({message: 'There are not users'});
+			} else {
+				res.status(200).send({users});	
+			}
+		}
+	});
+}
+
 module.exports = {
 	tests,
 	create,
 	login,
 	update,
 	uploadImage,
-	getImageFile
+	getImageFile,
+	getKeepers
 };
