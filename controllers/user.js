@@ -109,14 +109,14 @@ function update(req, res) {
 		return res.status(500).send({message: 'You do not have permission for updating the provided user'});
 	}
 
-	User.findByIdAndUpdate(userId, update, (err, userUpdated) => {
+	User.findByIdAndUpdate(userId, update, {new: true}, (err, userUpdated) => {
 		if (err) {
 			res.status(500).send({message: 'Thrown error while updating user'});
 		} else {
 			if (!userUpdated) {
 				res.status(404).send({message: 'The user could not be updated'});
 			} else {
-				res.status(200).send({ message: 'User updated successfully!!!'});
+				res.status(200).send({ user: userUpdated });
 			}
 		}
 	});	
