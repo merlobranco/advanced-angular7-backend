@@ -91,9 +91,27 @@ function getAnimal(req, res) {
 	});
 }
 
+function update(req, res) {
+	var animalId = req.params.id;
+	var update = req.body;
+
+	Animal.findByIdAndUpdate(animalId, update, {new: true}, (err, animalUpdated) => {
+		if (err) {
+			res.status(500).send({message: 'Thrown error while updating animal'});
+		} else {
+			if (!animalUpdated) {
+				res.status(404).send({message: 'The animal could not be updated'});
+			} else {
+				res.status(200).send({ animal: animalUpdated });
+			}
+		}
+	});
+}
+
 module.exports = {
 	tests,
 	create,
 	getAnimals,
-	getAnimal
+	getAnimal,
+	update
 }
