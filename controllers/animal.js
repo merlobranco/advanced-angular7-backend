@@ -161,6 +161,22 @@ function getImageFile(req, res) {
 	})
 }
 
+function remove(req, res) {
+	var animalId = req.params.id;
+
+	Animal.findByIdAndRemove(animalId, (err, animalRemoved) => {
+		if (err) {
+			res.status(500).send({message: 'Thrown error while deleting animal'});
+		} else {
+			if (!animalRemoved) {
+				res.status(404).send({message: 'The animal could not be deleted'});
+			} else {
+				res.status(200).send({ animal: animalRemoved });
+			}
+		}
+	});
+}
+
 module.exports = {
 	tests,
 	create,
@@ -168,5 +184,6 @@ module.exports = {
 	getAnimal,
 	update,
 	uploadImage,
-	getImageFile
+	getImageFile,
+	remove
 }
