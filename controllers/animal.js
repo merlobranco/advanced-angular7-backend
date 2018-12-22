@@ -55,7 +55,25 @@ function create(req, res) {
 	}
 }
 
+function getAnimals(req, res) {
+	// With populate() mongodb will look for the user document 
+	// referenced by the stored userId in animal
+	Animal.find({}).populate({path: 'user'}).exec((err, animals) => {
+		if (err) {
+			res.status(500).send({message: 'Thrown error while requesting the animals'});
+		}
+		else {
+			if (!animals) {
+				res.status(404).send({message: 'There are not animals'});
+			} else {
+				res.status(200).send({animals});	
+			}
+		}
+	});
+}
+
 module.exports = {
 	tests,
-	create
+	create,
+	getAnimals
 }
