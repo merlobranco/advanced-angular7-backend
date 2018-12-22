@@ -1,6 +1,8 @@
 'use strict'
 
 var mongoose = require('mongoose');
+mongoose.set('useFindAndModify', false);
+
 var Schema = mongoose.Schema;
 
 var AnimalSchema = Schema({
