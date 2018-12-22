@@ -41,21 +41,25 @@ function create(req, res) {
 			} else {
 				if (!isSetUser) {
 					// Encrypting the password
-					bcrypt.hash(params.password, null, null, function(err, hash) {
-						user.password = hash;
+					bcrypt.hash(params.password, null, null, (err, hash) => {
+						if (err) {
+							res.status(500).send({message: 'Thrown error while encrypting the user password'});
+						} else {
+							user.password = hash;
 
-						// Saving the user
-						user.save((err, userStored) => {
-							if (err) {
-								res.status(500).send({message: 'Thrown error while creating the user'});
-							} else {
-								if (!userStored) {
-									res.status(404).send({message: 'User has not been created'});
+							// Saving the user
+							user.save((err, userStored) => {
+								if (err) {
+									res.status(500).send({message: 'Thrown error while creating the user'});
 								} else {
-									res.status(200).send({user: userStored});
+									if (!userStored) {
+										res.status(404).send({message: 'User has not been created'});
+									} else {
+										res.status(200).send({user: userStored});
+									}
 								}
-							}
-						});
+							});
+						}
 					});
 				} else {
 					res.status(200).send({message: 'The user cannot be created because already exists'});
