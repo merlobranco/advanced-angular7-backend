@@ -7,6 +7,7 @@ var app = express();
 
 // Loading routes
 var user_routes = require('./routes/user');
+var animal_routes = require('./routes/animal');
 
 // body-parser middlewares 
 app.use(bodyParser.urlencoded({extended:false}));
@@ -18,6 +19,7 @@ app.use(bodyParser.json());
 
 // Base routes
 app.use('/api', user_routes);
+app.use('/api', animal_routes);
 
 // Exposting the created module 
 // for being used in another application
