@@ -31,11 +31,11 @@ function create(req, res) {
 		// Setting User property values
 		user.name = params.name;
 		user.surname = params.surname;
-		user.email = params.email;
+		user.email = params.email.toLowerCase();
 		user.role = 'ROLE_USER';
 		user.image = null;
 
-		User.findOne({email: user.email.toLowerCase()}, (err, isSetUser) => { 
+		User.findOne({email: user.email}, (err, isSetUser) => { 
 			if (err) {
 				res.status(500).send({message: 'Thrown error while checking if the user exists'});
 			} else {
@@ -69,7 +69,7 @@ function create(req, res) {
 
 		
 	} else {
-		res.status(200).send({message: 'Please provide the required User data'});
+		res.status(200).send({message: 'Please provide the required User data (name, surname, email, password)'});
 	}
 }
 
