@@ -14,5 +14,8 @@ api.post('/animals/create', md_auth.ensureAuth, AnimalController.create);
 api.get('/animals/', AnimalController.getAnimals);
 api.get('/animals/:id', AnimalController.getAnimal);
 api.put('/animals/:id', md_auth.ensureAuth, AnimalController.update);
+api.post('/animals/upload-image/:id', [md_auth.ensureAuth, md_upload], AnimalController.uploadImage);
+api.get('/animals/get-image-file/:imageFile', AnimalController.getImageFile);
+
 
 module.exports = api;

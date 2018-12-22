@@ -108,10 +108,65 @@ function update(req, res) {
 	});
 }
 
+function uploadImage(req, res) {
+	var animalId = req.params.id;
+	var file_name = 'no uploaded';
+
+	if(req.files) {
+		var file_path = req.files.image.path;
+		var file_split = file_path.split('\\');
+		file_name = file_split[2];
+
+		var ext_split = file_name.split('\.');
+		var file_ext = ext_split[1];
+
+		if (file_ext == 'png' || file_ext == 'jpg' || file_ext == 'jpeg' || file_ext == 'gif') {
+
+			Animal.findByIdAndUpdate(animalId, {image: file_name}, {new: true}, (err, animalUpdated) => {
+				if (err) {
+					res.status(500).send({message: 'Thrown error while updating animal'});
+				} else {
+					if (!animalUpdated) {
+						res.status(404).send({message: 'The animal could not be updated'});
+					} else {
+						res.status(200).send({ animal: animalUpdated, image: file_name });
+					}
+				}
+			});
+		} else {
+			// Deleting no valid files
+			fs.unlink(file_path, (err) => {
+				if (err) {
+					res.status(200).send({message: 'No valid file extension. File not deleted'});
+				} else {
+					res.status(200).send({message: 'No valid file extension. Should be png, jpg, jpeg or gif'});
+				}
+			});
+		}
+	} else {
+		res.status(200).send({message: 'No files has been uploaded'});
+	}
+}
+
+function getImageFile(req, res) {
+	var image_file = req.params.imageFile;
+	var path_file = './uploads/animals/' + image_file;
+
+	fs.exists(path_file, function(exists) {
+		if (exists) {
+			res.sendFile(path.resolve(path_file));
+		} else {
+			res.status(404).send({message: 'The requested image does not exist'});
+		}
+	})
+}
+
 module.exports = {
 	tests,
 	create,
 	getAnimals,
 	getAnimal,
-	update
+	update,
+	uploadImage,
+	getImageFile
 }

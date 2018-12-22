@@ -190,7 +190,7 @@ function getKeepers(req, res) {
 			res.status(500).send({message: 'Thrown error while requesting the keepers'});
 		} else {
 			if (!users) {
-				res.status(404).send({message: 'There are not users'});
+				res.status(404).send({message: 'There are not keepers'});
 			} else {
 				res.status(200).send({users});	
 			}
