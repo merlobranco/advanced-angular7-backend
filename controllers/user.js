@@ -80,30 +80,31 @@ function login(req, res) {
 	var password = params.password;
 
 	User.findOne({email: email.toLowerCase()}, (err, user) => { 
-			if (err) {
-				res.status(500).send({message: 'Thrown error while checking if the user exists'});
-			} else {
-				if (user) {
-					bcrypt.compare(password, user.password, (err, check) => {
-						if (check) {
-							// Checking and generating token
-							if (params.gettoken) {
-								res.status(200).send({
-									token: jwt.createToken(user)
-								});
-							} else {
-								res.status(200).send({user});
-							}
+		if (err) {
+			res.status(500).send({message: 'Thrown error while checking if the user exists'});
+		} else {
+			if (user) {
+				bcrypt.compare(password, user.password, (err, check) => {
+					if (check) {
+						// Checking and generating token
+						if (params.gettoken) {
+							res.status(200).send({
+								token: jwt.createToken(user)
+							});
 						} else {
-							res.status(404).send({message: 'The provided user could not be logged'});
+							user.password = '';
+							res.status(200).send({user});
 						}
-					});
-					
-				} else {
-					res.status(404).send({message: 'The provided user does not exist'});
-				}
+					} else {
+						res.status(404).send({message: 'The provided user could not be logged'});
+					}
+				});
+				
+			} else {
+				res.status(404).send({message: 'The provided user does not exist'});
 			}
-		});
+		}
+	});
 }
 
 function update(req, res) {
@@ -115,13 +116,14 @@ function update(req, res) {
 		return res.status(500).send({message: 'You do not have permission for updating the provided user'});
 	}
 
-	User.findByIdAndUpdate(userId, update, {new: true}, (err, userUpdated) => {
+	User.findByIdAndUpdate(userId, {name: update.name, surname: update.surname, email: update.email}, {new: true}, (err, userUpdated) => {
 		if (err) {
 			res.status(500).send({message: 'Thrown error while updating user'});
 		} else {
 			if (!userUpdated) {
 				res.status(404).send({message: 'The user could not be updated'});
 			} else {
+				userUpdated.password = '';
 				res.status(200).send({ user: userUpdated });
 			}
 		}
