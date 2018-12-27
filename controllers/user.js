@@ -110,13 +110,15 @@ function login(req, res) {
 function update(req, res) {
 	var userId = req.params.id;
 	var update = req.body;
+	// Required for not updating the password with empty values
+	delete update.password;
 
 	// Checking that the user to be updated is not the logged user
 	if (userId != req.user.sub) {
 		return res.status(500).send({message: 'You do not have permission for updating the provided user'});
 	}
 
-	User.findByIdAndUpdate(userId, {name: update.name, surname: update.surname, email: update.email}, {new: true}, (err, userUpdated) => {
+	User.findByIdAndUpdate(userId, update, {new: true}, (err, userUpdated) => {
 		if (err) {
 			res.status(500).send({message: 'Thrown error while updating user'});
 		} else {

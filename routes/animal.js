@@ -11,7 +11,7 @@ var multipart = require('connect-multiparty');
 var md_upload = multipart({ uploadDir: './uploads/animals'});
 
 api.get('/animals/controller-tests', md_auth.ensureAuth, AnimalController.tests);
-api.get('/animals/', AnimalController.getAnimals);
+api.get('/animals', AnimalController.getAnimals);
 api.get('/animals/:id', AnimalController.getAnimal);
 api.post('/animals/create', [md_auth.ensureAuth, md_admin.isAdmin], AnimalController.create);
 api.put('/animals/:id', [md_auth.ensureAuth, md_admin.isAdmin], AnimalController.update);
