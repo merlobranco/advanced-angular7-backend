@@ -177,6 +177,26 @@ function remove(req, res) {
 	});
 }
 
+function deleteImageFile(req, res) {
+	var image_file = req.params.imageFile;
+	var path_file = './uploads/animals/' + image_file;
+
+	fs.exists(path_file, function(exists) {
+		if (exists) {
+			// Deleting required image
+			fs.unlink(path_file, (err) => {
+				if (err) {
+					res.status(200).send({message: 'File not deleted'});
+				} else {
+					res.status(200).send({message: 'File deleted successfully!!!'});
+				}
+			});
+		} else {
+			res.status(404).send({message: 'The requested image does not exist'});
+		}
+	})
+}
+
 module.exports = {
 	tests,
 	create,
@@ -185,5 +205,6 @@ module.exports = {
 	update,
 	uploadImage,
 	getImageFile,
-	remove
+	remove,
+	deleteImageFile
 }
